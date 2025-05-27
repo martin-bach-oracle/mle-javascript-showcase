@@ -1,5 +1,9 @@
 alter session set container = freepdb1;
 
+prompt create the demouser account ...
+create user demouser identified by demouser;
+grant db_developer_role to demouser;
+
 prompt JavaScript grants...
 grant execute on javascript to demouser;
 grant execute dynamic mle to demouser;
