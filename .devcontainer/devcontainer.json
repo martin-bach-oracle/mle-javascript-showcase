@@ -1,5 +1,5 @@
 {
-	"name": "Oracle DB 23ai+ORDS+MongoDB API",
+	"name": "Oracle Database Free",
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
