@@ -4,6 +4,6 @@ services:
     ports:
       - 1521:1521
     environment:
-      - ORACLE_PASSWORD=changeOnInstall
-      - APP_USER=demouser
-      - APP_USER_PASSWORD_FILE=demouser
+      - ORACLE_PWD=changeOnInstall
+    volumes:
+      - ./01_setup/init:/opt/oracle/scripts/startup
