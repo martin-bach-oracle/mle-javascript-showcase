@@ -1,0 +1,10 @@
+{
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"esbuild": "0.25.5",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"@types/mle-js": "github:oracle-samples/mle-modules#main"
+	}
+}
