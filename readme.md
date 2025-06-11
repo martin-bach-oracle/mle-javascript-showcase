@@ -39,6 +39,8 @@ As part of the database initialisation you get a new user account in `freepdb1`,
 
 All scripts are to be run as `demouser` on `freepdb1`; ideally using VSCode and [SQLDeveloper Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Oracle.sql-developer)
 
+### Basic Examples
+
 You'll find **basic examples** in `02_basic_examples`:
 
 - [Inline JavaScript](https://docs.oracle.com/en/database/oracle/oracle-database/23/mlejs/call-specifications-functions.html) functions and procedures
@@ -48,7 +50,15 @@ You'll find **basic examples** in `02_basic_examples`:
 - Examples how to expose JavaScript to SQL and PL/SQL
 - Dynamic JavaScript execution
 
+### Typescript
+
 You can find more advanced examples how to write, test, and transpile **Typescript** to In-Database JavaScript in `03_typescript`.
+
+They can be transpiled to JavaScript and loaded into the database using `03_typescript/utils/deploy.sh`. You need to change directory to `03_typescript` before executing the deployment script. Once the transpiled code has been loaded you can view it in the schema browser.
+
+You should also take a moment to review the code completion features and type mappings in the `index.ts` file.
+
+### NoSQL aka SODA
 
 The final set of examples concerns the **NoSQL-style API** named [SODA](https://docs.oracle.com/en/database/oracle/oracle-database/23/mlejs/soda-collections-in-mle-js.html). Simple Oracle Document Access (SODA) is a set of NoSQL-style APIs that let you create and store collections of documents (in particular JSON) in Oracle Database, retrieve them, and query them, without needing to know Structured Query Language (SQL) or how the documents are stored in the database.
 
