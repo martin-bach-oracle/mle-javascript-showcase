@@ -89,7 +89,47 @@ describe("todo unit tests", () => {
 	 * Update the Todo Item
 	 */
 	test("update the todo item's details", async () => {
-		let result = await connection.execute(
+		const todoItem: t.TodoItem = {
+			name: "update the todo item via a unit test",
+			priority: t.Priority.high,
+			created: new Date("2025-06-06T12:00:00.000Z"),
+			dueDate: new Date("2025-06-12T14:00:00.000Z"),
+			done: true,
+		};
+
+		const result = await connection.execute(
+			`begin
+				
+				:l_status := todos_package.update_todo(id => :todo_id, todo => :todo_item);
+			end;`,
+			{
+				l_status: {
+					dir: oracledb.BIND_OUT,
+					type: oracledb.DB_TYPE_BOOLEAN,
+				},
+				todo_id: {
+					dir: oracledb.BIND_IN,
+					val: id,
+					type: oracledb.NUMBER,
+				},
+				todo_item: {
+					dir: oracledb.BIND_IN,
+					val: todoItem,
+					type: oracledb.DB_TYPE_JSON,
+				},
+			},
+		);
+
+		expect(result.outBinds.l_status).toBeTruthy();
+	});
+
+	/**
+	 * Ensure the update worked as expected
+	 */
+	test("ensure the update worked as expected", async () => {
+		// invoke the PL/SQL call specification to retrieve
+		// the previously created todo item
+		const result = await connection.execute(
 			`select
 				todos_package.get_todo(:id) as todoItem`,
 			[id],
@@ -98,31 +138,38 @@ describe("todo unit tests", () => {
 			},
 		);
 
-		// bump the priority and set the status to DONE
-		const todo: t.TodoItem = {
-			priority: t.Priority.high,
-			name: result.rows[0].TODOITEM.name,
-			created: result.rows[0].TODOITEM.created,
-			dueDate: result.rows[0].TODOITEM.dueDate,
+		const actualTodoItem = result.rows[0].TODOITEM;
+		const referenceTodoItem = {
+			priority: "high",
+			name: "update the todo item via a unit test",
+			created: new Date("Fri Jun 06 2025 12:00:00 GMT+0200 (Central European Summer Time)"),
+			dueDate: new Date("Thu Jun 12 2025 14:00:00 GMT+0200 (Central European Summer Time)"),
 			done: true,
 		};
 
-		result = await connection.execute(
-			"declare l_status boolean; begin :l_status := todos_package.update_todo(id => :id, todo => :todo); end;",
+		expect(actualTodoItem).toEqual(referenceTodoItem);
+	});
+
+	/**
+	 * Delete the todo item
+	 */
+	test("delete the todo item", async () => {
+		const result = await connection.execute(
+			`begin
+				
+				:l_status := todos_package.delete_todo(id => :todo_id);
+			end;`,
 			{
 				l_status: {
 					dir: oracledb.BIND_OUT,
-					type: oracledb.DB_TYPE_BOOLEAN
+					type: oracledb.DB_TYPE_BOOLEAN,
 				},
-				id: {
+				todo_id: {
 					dir: oracledb.BIND_IN,
-					value: id
-				}, todo: {
-					dir: oracledb.BIND_IN,
-					value: todo,
-					type: oracledb.DB_TYPE_JSON
-				}
-			}
+					val: id,
+					type: oracledb.NUMBER,
+				},
+			},
 		);
 
 		expect(result.outBinds.l_status).toBeTruthy();

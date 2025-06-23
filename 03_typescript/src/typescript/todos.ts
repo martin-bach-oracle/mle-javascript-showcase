@@ -33,6 +33,19 @@ export function newTodo(todo: TodoItem): number {
 		throw new Error("you must pass a valid todo item to this function");
 	}
 
+	try {
+		todo.created = new Date(todo.created);
+		todo.dueDate = new Date(todo.dueDate);
+	} catch (err) {
+		throw new Error(
+			"either the `created` or the `due` date aren't real dates.",
+		);
+	}
+
+	if (todo.dueDate < todo.created) {
+		throw new Error("a todo item cannot be due before it started");
+	}
+
 	const result = session.execute(
 		`insert into todos (
             priority,
@@ -62,12 +75,12 @@ export function newTodo(todo: TodoItem): number {
 			created: {
 				type: oracledb.DB_TYPE_DATE,
 				dir: oracledb.BIND_IN,
-				val: new Date(todo.created),
+				val: todo.created,
 			},
 			due_date: {
 				type: oracledb.DB_TYPE_DATE,
 				dir: oracledb.BIND_IN,
-				val: new Date(todo.dueDate),
+				val: todo.dueDate,
 			},
 			done: {
 				type: oracledb.DB_TYPE_BOOLEAN,
@@ -89,6 +102,13 @@ export function newTodo(todo: TodoItem): number {
 	return result.outBinds.id[0];
 }
 
+/**
+ * Retrieve a todo Item from the database by ID
+ *
+ * @param {number} id - the todo item's primary key
+ * @returns {TodoItem} - the todo item retrieved from the database
+ * @throws {Error} in case no todo item exists with the ID provided
+ */
 export function getTodo(id: number): TodoItem {
 	if (typeof id !== "number") {
 		throw new Error("you must pass a valid ID to this function");
@@ -110,11 +130,12 @@ export function getTodo(id: number): TodoItem {
 		[id],
 	);
 
-	//
+	// throw an error if the database lookup failed
 	if (result.rows?.length !== 1) {
 		throw new Error(`there is no Todo item with id ${id} in the database`);
 	}
 
+	// construct and return the todo item
 	const todoItem: TodoItem = {
 		priority: result.rows[0].PRIORITY,
 		name: result.rows[0].NAME,
@@ -139,6 +160,15 @@ export function updateTodo(id: number, todo: TodoItem): boolean {
 		throw new Error("please pass a valid ID and/or todo item to this function");
 	}
 
+	try {
+		todo.created = new Date(todo.created);
+		todo.dueDate = new Date(todo.dueDate);
+	} catch (err) {
+		throw new Error(
+			"either the `created` or the `due` date aren't real dates.",
+		);
+	}
+
 	const result = session.execute(
 		`update todos set
             priority = :priority,
@@ -161,12 +191,12 @@ export function updateTodo(id: number, todo: TodoItem): boolean {
 			created: {
 				type: oracledb.DB_TYPE_DATE,
 				dir: oracledb.BIND_IN,
-				val: new Date(todo.created),
+				val: todo.created,
 			},
 			due_date: {
 				type: oracledb.DB_TYPE_DATE,
 				dir: oracledb.BIND_IN,
-				val: new Date(todo.dueDate),
+				val: todo.dueDate,
 			},
 			done: {
 				type: oracledb.DB_TYPE_BOOLEAN,
@@ -193,12 +223,13 @@ export function updateTodo(id: number, todo: TodoItem): boolean {
  *
  * @param {number} id - the todo item's primary key
  * @throws {Error} If the todo item ID does not exist or a generic error occurs
+ * @returns {boolean} depending on the successful deletion of the todo item
  */
 export function deleteTodo(id: number) {
 	if (Number.isNaN(id)) {
 		throw new Error("please provide a valid ID to this function");
 	}
-	const result = session.execute("delete todo where id = :id", {
+	const result = session.execute("delete todos where id = :id", {
 		id: {
 			dir: oracledb.BIND_IN,
 			type: oracledb.DB_TYPE_NUMBER,
@@ -207,8 +238,8 @@ export function deleteTodo(id: number) {
 	});
 
 	if (result.rowsAffected !== 1) {
-		throw new Error(
-			`todo item with id ${id} does not exist and cannot be deleted`,
-		);
+		return false;
 	}
+
+	return true;
 }

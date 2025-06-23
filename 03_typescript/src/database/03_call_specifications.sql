@@ -12,7 +12,7 @@ create or replace package todos_package as
     function update_todo(id number, todo json) return boolean
         as mle module todos_module signature 'updateTodo';
     
-    procedure delete_todo(id number)
+    function delete_todo(id number) return boolean
         as mle module todos_module signature 'deleteTodo';
 end todos_package;
 /
