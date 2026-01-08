@@ -6,4 +6,4 @@ services:
     environment:
       - ORACLE_PASSWORD=changeOnInstall
     volumes:
-      - ./01_setup/init:/opt/oracle/scripts/startup
+      - ./01_setup/init:/container-entrypoint-initdb.d
