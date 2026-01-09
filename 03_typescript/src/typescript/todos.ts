@@ -38,7 +38,7 @@ export function newTodo(todo: TodoItem): number {
 		todo.dueDate = new Date(todo.dueDate);
 	} catch (err) {
 		throw new Error(
-			"either the `created` or the `due` date aren't real dates.",
+			`either the 'created' or the 'due' date aren't real dates. ${err}`,
 		);
 	}
 
@@ -165,7 +165,7 @@ export function updateTodo(id: number, todo: TodoItem): boolean {
 		todo.dueDate = new Date(todo.dueDate);
 	} catch (err) {
 		throw new Error(
-			"either the `created` or the `due` date aren't real dates.",
+			`either the 'created' or the 'due' date aren't real dates. ${err}`,
 		);
 	}
 

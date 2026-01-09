@@ -1,6 +1,6 @@
 # MLE JavaScript Showcase
 
-Oracle Database 23ai introduces [In-Database JavaScript](https://docs.oracle.com/en/database/oracle/oracle-database/23/mlejs/) for Linux x86-64 and aarch64. That’s Linux on Intel and Arm, respectively. Developers with a preference for Typescript can use it alternatively after transpilation to JavaScript. JavaScript support in Oracle Database is known as **Multilingual Engine**, or MLE for short.
+Oracle AI Database 26ai introduces [In-Database JavaScript](https://docs.oracle.com/en/database/oracle/oracle-database/26/mlejs/) for Linux x86-64 and aarch64. That’s Linux on Intel and Arm, respectively. Developers with a preference for Typescript can use it alternatively after transpilation to JavaScript. JavaScript support in Oracle Database is known as **Multilingual Engine**, or MLE for short.
 
 This project is intended to be run via GitHub codespaces and showcase MLE/JavaScript features in a simple-to-set up environment. Alternatively you can spin up a container instance based on a compose file.
 
@@ -23,17 +23,17 @@ Both are discussed in turn.
 
 ### GitHub Codespaces
 
-The repository contains instructions in `.devcontainer/devcontainer.json` creating a development environment in GitHub Codespaces. It might take a minute or 2 to create, please be patient. As part of the Codespace initialisation a database will be set up including a demo account, `demouser`, password `demouser`, in `freepdb1` using `docker-compose`. Update the compose file to the latest database release as per <https://container-registry.oracle.com/ords/ocr/ba/database/free> if needed.
+The repository contains instructions in `.devcontainer/devcontainer.json` creating a development environment in GitHub Codespaces. It might take a minute or 2 to create, please be patient. As part of the Codespace initialisation a database will be set up including a demo account, `demouser`, password `demouser`, in `freepdb1` using `docker-compose`. Update the compose file to the latest database release as per <https://github.com/gvenzl/oci-oracle-free> if needed.
 
-Since VSCode is the default development environment in Codespaces it is only logical to link [SQLDeveloper Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Oracle.sql-developer) into the IDE. Create a new connection in the SQLDev extension and run the scripts as you like and see fit. Connect as `demouser/demouser` to freepdb1 on `localhost`.
+Since VSCode is the default development environment in Codespaces it is only logical to link [SQLDeveloper Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Oracle.sql-developer) into the IDE. Create a new connection in the SQLDev extension and run the scripts as you like and see fit. Connect as `demouser/demouser` to freepdb1 on `localhost`. Here is a screenshot showing you how to create the connection:
 
 ![Screenshot showing how to create a connection in Codespaces for Oracle SQLDeveloper for VSCode](doc/database-connection.png "Screenshot showing connection details")
 
 ### Local deployment
 
-You need either Docker or Podman installed and available on your machine. Clone the repository using the standard commands and create the sample database using `01_setup/database.sh`. Update the script to the latest database release as per <https://container-registry.oracle.com/ords/ocr/ba/database/free> if needed.
+You need either Docker or Podman installed and available on your machine. Clone the repository using the standard commands and create the sample database using `01_setup/database.sh`. Update the script to the latest database release as per <https://github.com/gvenzl/oci-oracle-free> if needed.
 
-As part of the database initialisation you get a new user account in `freepdb1`, named `demouser`. It will be used for all the demo scripts. Using your favourite tool, ideally SQLDeveloper Extension for VSCode, to connect to the database and run the scripts in a worksheet.
+As part of the database initialisation you get a new user account in `freepdb1`, named `demouser`. It will be used for all the demo scripts. Using your favourite tool, ideally SQLDeveloper Extension for VSCode, to connect to the database and run the scripts in a worksheet. The screenshot above shows you how to create the connection.
 
 ## Example Scripts
 
@@ -48,7 +48,7 @@ You'll find **basic examples** in `02_basic_examples`:
 - [MLE Modules](https://docs.oracle.com/en/database/oracle/oracle-database/23/mlejs/using-javascript-modules-mle.html)
 - [MLE environments](https://docs.oracle.com/en/database/oracle/oracle-database/23/mlejs/specifying-environments-mle-modules.html)
 - Examples how to expose JavaScript to SQL and PL/SQL
-- Dynamic JavaScript execution
+- [Dynamic JavaScript execution](https://docs.oracle.com/en/database/oracle/oracle-database/26/mlejs/overview-dynamic-mle-execution.html)
 
 ### Typescript
 

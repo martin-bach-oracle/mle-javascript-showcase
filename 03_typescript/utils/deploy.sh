@@ -28,17 +28,11 @@ sql demouser/demouser@localhost/freepdb1 <<-EOF
 
 whenever sqlerror exit 1
 
--- create the necessary tables ...
-lb update -search-path src/database -changelog-file controller.xml 
-
--- ... and the typescript code
+-- load the transpiled Typescript code
 mle create-module -filename dist/todos.js -module-name todos_module -replace
 
--- ensure there are no invalid objects
-begin
-    dbms_utility.compile_schema(user);
-end;
-/
+-- then create the necessary DDL ...
+lb update -search-path src/database -changelog-file controller.xml 
 
 prompt checking for invalid objects past deployment ...
 select
