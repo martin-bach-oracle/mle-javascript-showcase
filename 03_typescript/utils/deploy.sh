@@ -15,8 +15,7 @@ set -euxo pipefail
 
 # simulate the CI pipeline and create the resulting JavaScript
 # file in the dist/ directory
-npx biome format --verbose src/typescript --write && \
-npx biome lint --verbose src/typescript && \
+npx biome check --write --verbose ./src/typescript && \
 npx tsc
 
 # Now connect to the database and deploy the transpiled module and database
