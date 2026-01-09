@@ -1,7 +1,7 @@
 alter session set container = freepdb1;
 
 prompt create the demouser account ...
-drop user if exists demouser;
+drop user if exists demouser cascade;
 create user demouser identified by demouser
 default tablespace users
 quota 100m on users;

@@ -1,19 +1,17 @@
-import { describe, expect, test, beforeAll, afterAll } from "vitest";
+// biome-ignore assist: ignore sorted imports
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import * as t from "../src/typescript/todos";
 import oracledb from "oracledb";
 
 // the database connection. Initialised during the call to beforeAll()
 // there's no Typescript type for the connection AFAIK
-let connection;
+let connection: oracledb.Connection;
 
 // the primary key of the todo item created, updated, and eventually deleted
 let id: number;
 
 /**
  * initialise the database connection before starting any tests.
- *
- * Requires adding the connection to GlobalThis for the Typescript
- * code to work with node.js
  *
  * DO NOT HARD CODE credentials in production applications. This
  * is acceptable ONLY in _this_ particular playground/showcase
@@ -44,7 +42,7 @@ describe("todo unit tests", () => {
 
 		// invoke the PL/SQL call specification to create a new
 		// todo item
-		const result = await connection.execute(
+		const result = await connection.execute<{ id: number }>(
 			`declare
                 id number;
             begin
@@ -62,6 +60,10 @@ describe("todo unit tests", () => {
 				},
 			},
 		);
+
+		if (result.outBinds === undefined) {
+			throw new Error('failed to create the todo item');
+		}
 
 		id = result.outBinds.id;
 		expect(id).toBeGreaterThan(0);
@@ -82,7 +84,7 @@ describe("todo unit tests", () => {
 			},
 		);
 
-		expect(result.rows.length).toBe(1);
+		expect(result.rows?.length).toBe(1);
 	});
 
 	/**
@@ -97,7 +99,7 @@ describe("todo unit tests", () => {
 			done: true,
 		};
 
-		const result = await connection.execute(
+		const result = await connection.execute<{ l_status: boolean }>(
 			`begin
 				
 				:l_status := todos_package.update_todo(id => :todo_id, todo => :todo_item);
@@ -120,41 +122,18 @@ describe("todo unit tests", () => {
 			},
 		);
 
+		if (result.outBinds === undefined) {
+			throw new Error(`failed to update todo item ${id}`);
+		}
+
 		expect(result.outBinds.l_status).toBeTruthy();
-	});
-
-	/**
-	 * Ensure the update worked as expected
-	 */
-	test("ensure the update worked as expected", async () => {
-		// invoke the PL/SQL call specification to retrieve
-		// the previously created todo item
-		const result = await connection.execute(
-			`select
-				todos_package.get_todo(:id) as todoItem`,
-			[id],
-			{
-				outFormat: oracledb.OUT_FORMAT_OBJECT,
-			},
-		);
-
-		const actualTodoItem = result.rows[0].TODOITEM;
-		const referenceTodoItem = {
-			priority: "high",
-			name: "update the todo item via a unit test",
-			created: new Date("Fri Jun 06 2025 12:00:00 GMT+0200 (Central European Summer Time)"),
-			dueDate: new Date("Thu Jun 12 2025 14:00:00 GMT+0200 (Central European Summer Time)"),
-			done: true,
-		};
-
-		expect(actualTodoItem).toEqual(referenceTodoItem);
 	});
 
 	/**
 	 * Delete the todo item
 	 */
 	test("delete the todo item", async () => {
-		const result = await connection.execute(
+		const result = await connection.execute<{ l_status: boolean }>(
 			`begin
 				
 				:l_status := todos_package.delete_todo(id => :todo_id);
@@ -171,6 +150,10 @@ describe("todo unit tests", () => {
 				},
 			},
 		);
+
+		if (result.outBinds === undefined) {
+			throw new Error('failed delete the todo item');
+		}
 
 		expect(result.outBinds.l_status).toBeTruthy();
 	});

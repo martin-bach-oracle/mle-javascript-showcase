@@ -15,8 +15,7 @@ set -euxo pipefail
 
 # simulate the CI pipeline and create the resulting JavaScript
 # file in the dist/ directory
-npx biome format --verbose src/typescript --write && \
-npx biome lint --verbose src/typescript && \
+npx biome check --write --verbose ./src/typescript && \
 npx tsc
 
 # Now connect to the database and deploy the transpiled module and database
@@ -28,17 +27,11 @@ sql demouser/demouser@localhost/freepdb1 <<-EOF
 
 whenever sqlerror exit 1
 
--- create the necessary tables ...
-lb update -search-path src/database -changelog-file controller.xml 
-
--- ... and the typescript code
+-- load the transpiled Typescript code
 mle create-module -filename dist/todos.js -module-name todos_module -replace
 
--- ensure there are no invalid objects
-begin
-    dbms_utility.compile_schema(user);
-end;
-/
+-- then create the necessary DDL ...
+lb update -search-path src/database -changelog-file controller.xml 
 
 prompt checking for invalid objects past deployment ...
 select

@@ -8,7 +8,7 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
-		"skipLibCheck": false,
+		"skipLibCheck": true,
 		"moduleResolution": "bundler",
 		"lib": ["ES6", "ES2017", "ES2021"],
 	},
